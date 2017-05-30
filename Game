@@ -1,0 +1,161 @@
+Space Invader
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Test extends JPanel implements KeyListener
+{
+    boolean pressLeft, pressRight, pressUp, pressDown;
+    int x = 0, y = 0;
+    int r = 5;
+    int[] arrUp = new int [r];
+    int[] arrRight = new int [r];
+    int[] arrDown = new int [r];
+    int[] arrLeft = new int [r];
+    int[] arr2Up = new int [r];
+    int[] arr2Right = new int [r];
+    int[] arr2Down = new int [r];
+    int[] arr2Left = new int [r];
+    int s = 0;
+    Test ()
+    {
+        addKeyListener (this);
+        setFocusable (true);
+        setBackground (Color.black);
+    }
+
+
+    public void keyTyped (KeyEvent e)
+    {
+    }
+
+
+    public void keyPressed (KeyEvent e)
+    {
+        char key = (char) e.getKeyCode ();
+        if (key == e.VK_LEFT)
+            pressLeft = true;
+        if (key == e.VK_RIGHT)
+            pressRight = true;
+        if (key == e.VK_UP)
+            pressUp = true;
+        if (key == e.VK_DOWN)
+            pressDown = true;
+    }
+
+
+    public void keyReleased (KeyEvent e)
+    {
+        char key = (char) e.getKeyCode ();
+        if (key == e.VK_LEFT)
+            pressLeft = false;
+        if (key == e.VK_RIGHT)
+            pressRight = false;
+        if (key == e.VK_UP)
+            pressUp = false;
+        if (key == e.VK_DOWN)
+            pressDown = false;
+        if (key == e.VK_ESCAPE)
+            System.exit (0);
+    }
+
+
+    public int shift (int i)
+    {
+        if (i > 150)
+            return -(i - 125) / 50;
+        else
+            return (174 - i) / 50;
+    }
+
+
+    public void drawParticals (Graphics g)
+    {
+        g.setColor (Color.orange);
+        for (int i = 0 ; i < r ; i++)
+        {
+            g.fillOval (arrUp [i] + s * shift (arrUp [i]), -5 + 3 * s, 5, 5);
+            g.fillOval (299 - 3 * s, arrRight [i] + s * shift (arrRight [i]), 5, 5);
+            g.fillOval (arrDown [i] + s * shift (arrDown [i]), 299 - 3 * s, 5, 5);
+            g.fillOval (-5 + 3 * s, arrLeft [i] + s * shift (arrLeft [i]), 5, 5);
+        }
+        if (arr2Up [0] != 0 && arr2Down [0] != 0 && arr2Right [0] != 0 && arr2Left [0] != 0 && arr2Up [1] != 0 && arr2Down [1] != 0 && arr2Right [1] != 0 && arr2Left [1] != 0)
+        {
+            for (int i = 0 ; i < r ; i++)
+            {
+                g.fillOval (arr2Up [i] + ((s + 50) % 100) * shift (arr2Up [i]), -5 + 3 * ((s + 50) % 100), 5, 5);
+                g.fillOval (299 - 3 * ((s + 50) % 100), arr2Right [i] + ((s + 50) % 100) * shift (arr2Right [i]), 5, 5);
+                g.fillOval (arr2Down [i] + ((s + 50) % 100) * shift (arr2Down [i]), 299 - 3 * ((s + 50) % 100), 5, 5);
+                g.fillOval (-5 + 3 * ((s + 50) % 100), arr2Left [i] + ((s + 50) % 100) * shift (arr2Left [i]), 5, 5);
+            }
+        }
+        s++;
+        this.repaint ();
+        try
+        {
+            Thread.sleep (30);
+        }
+        catch (Exception e)
+        {
+        }
+    }
+
+
+    public void drawPlane (Graphics g)
+    {
+        g.setColor (Color.red);
+        int[] xcoor = {x + 150, x + 145, x + 155};
+        int[] ycoor = {y + 140, y + 155, y + 155};
+        g.fillPolygon (xcoor, ycoor, 3);
+        if (pressLeft)
+            x -= 5;
+        if (pressRight)
+            x += 5;
+        if (pressUp)
+            y -= 5;
+        if (pressDown)
+            y += 5;
+        repaint ();
+    }
+
+
+
+    public void paintComponent (Graphics g)
+    {
+        super.paintComponent (g);
+        if (s % 100 == 0)
+        {
+            s = 0;
+            for (int i = 0 ; i < r ; i++)
+            {
+                arrUp [i] = (int) Math.floor (294 * Math.random ());
+                arrRight [i] = (int) Math.floor (294 * Math.random ());
+                arrDown [i] = (int) Math.floor (294 * Math.random ());
+                arrLeft [i] = (int) Math.floor (294 * Math.random ());
+            }
+        }
+        if ((s - 50) % 100 == 0)
+        {
+            for (int i = 0 ; i < r ; i++)
+            {
+                arr2Up [i] = (int) Math.floor (294 * Math.random ());
+                arr2Right [i] = (int) Math.floor (294 * Math.random ());
+                arr2Down [i] = (int) Math.floor (294 * Math.random ());
+                arr2Left [i] = (int) Math.floor (294 * Math.random ());
+            }
+        }
+        drawParticals (g);
+        drawPlane (g);
+    }
+
+
+    public static void main (String[] args)
+    {
+        JFrame frame = new JFrame ("Test");
+        frame.getContentPane ().add (new Test ());
+        frame.setSize (315, 337);
+        frame.setVisible (true);
+        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+    }
+}
